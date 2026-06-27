@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pnpm install && pnpm --filter @workspace/dforia run build",
-  "outputDirectory": "artifacts/dforia/dist/public",
+  "buildCommand": "cd artifacts/dforia && npm install && npm run build",
+  "outputDirectory": "artifacts/dforia/dist",
   "installCommand": "echo skip"
 }
