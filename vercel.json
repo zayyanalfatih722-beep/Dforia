@@ -1,1 +1,4 @@
-
+{
+  "buildCommand": "cd artifacts/dforia && npm install --legacy-peer-deps && npm run build",
+  "outputDirectory": "artifacts/dforia/dist"
+}
