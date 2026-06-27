@@ -1,0 +1,680 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: menu
+    description: Menu items
+  - name: orders
+    description: Orders
+  - name: settings
+    description: Store settings
+  - name: banners
+    description: Promo banners
+  - name: coupons
+    description: Discount coupons
+
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  # ── Menu ──────────────────────────────────────────────────────────────
+  /menu:
+    get:
+      operationId: listMenuItems
+      tags: [menu]
+      summary: List all menu items
+      responses:
+        "200":
+          description: List of menu items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MenuItem"
+    post:
+      operationId: createMenuItem
+      tags: [menu]
+      summary: Create a menu item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MenuItemInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MenuItem"
+
+  /menu/sold:
+    post:
+      operationId: recordMenuSold
+      tags: [menu]
+      summary: Increment soldToday for ordered items and auto-close when quota reached
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MenuItemSoldUpdate"
+      responses:
+        "200":
+          description: Updated menu items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MenuItem"
+
+  /menu/{id}:
+    put:
+      operationId: updateMenuItem
+      tags: [menu]
+      summary: Update a menu item
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MenuItemUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MenuItem"
+    delete:
+      operationId: deleteMenuItem
+      tags: [menu]
+      summary: Delete a menu item
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Deleted
+
+  # ── Orders ────────────────────────────────────────────────────────────
+  /orders:
+    get:
+      operationId: listOrders
+      tags: [orders]
+      summary: List all orders
+      responses:
+        "200":
+          description: List of orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Order"
+    post:
+      operationId: createOrder
+      tags: [orders]
+      summary: Place a new order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrderInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+
+  /orders/{id}:
+    put:
+      operationId: updateOrder
+      tags: [orders]
+      summary: Update order status or bukti transfer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrderUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+
+  # ── Settings ──────────────────────────────────────────────────────────
+  /settings:
+    get:
+      operationId: getSettings
+      tags: [settings]
+      summary: Get store settings
+      responses:
+        "200":
+          description: Settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StoreSettings"
+    put:
+      operationId: updateSettings
+      tags: [settings]
+      summary: Update store settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StoreSettingsInput"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StoreSettings"
+
+  # ── Banners ───────────────────────────────────────────────────────────
+  /banners:
+    get:
+      operationId: listBanners
+      tags: [banners]
+      summary: List all banners
+      responses:
+        "200":
+          description: List of banners
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Banner"
+    post:
+      operationId: createBanner
+      tags: [banners]
+      summary: Create a banner
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BannerInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Banner"
+
+  /banners/{id}:
+    put:
+      operationId: updateBanner
+      tags: [banners]
+      summary: Update a banner
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BannerInput"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Banner"
+    delete:
+      operationId: deleteBanner
+      tags: [banners]
+      summary: Delete a banner
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Deleted
+
+  # ── Coupons ───────────────────────────────────────────────────────────
+  /coupons:
+    get:
+      operationId: listCoupons
+      tags: [coupons]
+      summary: List all coupons
+      responses:
+        "200":
+          description: List of coupons
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Coupon"
+    post:
+      operationId: createCoupon
+      tags: [coupons]
+      summary: Create a coupon
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CouponInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Coupon"
+
+  /coupons/{id}:
+    put:
+      operationId: updateCoupon
+      tags: [coupons]
+      summary: Update a coupon
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CouponUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Coupon"
+    delete:
+      operationId: deleteCoupon
+      tags: [coupons]
+      summary: Delete a coupon
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Deleted
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required: [status]
+
+    MenuItem:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: integer
+        image:
+          type: string
+        category:
+          type: string
+        rating:
+          type: number
+        isBestSeller:
+          type: boolean
+        isAvailable:
+          type: boolean
+        dailyQuota:
+          type: integer
+        soldToday:
+          type: integer
+        quotaResetDate:
+          type: string
+        createdAt:
+          type: string
+      required: [id, name, description, price, image, category, rating, isBestSeller, isAvailable, dailyQuota, soldToday, quotaResetDate, createdAt]
+
+    MenuItemInput:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: integer
+        image:
+          type: string
+        category:
+          type: string
+        rating:
+          type: number
+        isBestSeller:
+          type: boolean
+        isAvailable:
+          type: boolean
+        dailyQuota:
+          type: integer
+        soldToday:
+          type: integer
+        quotaResetDate:
+          type: string
+      required: [id, name, price]
+
+    MenuItemUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: integer
+        image:
+          type: string
+        category:
+          type: string
+        rating:
+          type: number
+        isBestSeller:
+          type: boolean
+        isAvailable:
+          type: boolean
+        dailyQuota:
+          type: integer
+        soldToday:
+          type: integer
+        quotaResetDate:
+          type: string
+
+    MenuItemSoldUpdate:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              quantity:
+                type: integer
+            required: [id, quantity]
+      required: [items]
+
+    Order:
+      type: object
+      properties:
+        id:
+          type: string
+        items:
+          type: object
+        customerName:
+          type: string
+        whatsapp:
+          type: string
+        address:
+          type: string
+        notes:
+          type: string
+        paymentMethod:
+          type: string
+        status:
+          type: string
+        totalPrice:
+          type: integer
+        subtotal:
+          type: integer
+        discount:
+          type: integer
+        couponCode:
+          type: string
+          nullable: true
+        buktiTransfer:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+      required: [id, items, customerName, whatsapp, address, paymentMethod, status, totalPrice, subtotal, discount, createdAt]
+
+    OrderInput:
+      type: object
+      properties:
+        id:
+          type: string
+        items:
+          type: object
+        customerName:
+          type: string
+        whatsapp:
+          type: string
+        address:
+          type: string
+        notes:
+          type: string
+        paymentMethod:
+          type: string
+        status:
+          type: string
+        totalPrice:
+          type: integer
+        subtotal:
+          type: integer
+        discount:
+          type: integer
+        couponCode:
+          type: string
+          nullable: true
+      required: [id, items, customerName, whatsapp, address, paymentMethod, totalPrice, subtotal]
+
+    OrderUpdate:
+      type: object
+      properties:
+        status:
+          type: string
+        buktiTransfer:
+          type: string
+          nullable: true
+
+    StoreSettings:
+      type: object
+      properties:
+        storeName:
+          type: string
+        whatsappNumber:
+          type: string
+        bankName:
+          type: string
+        accountNumber:
+          type: string
+        logoUrl:
+          type: string
+        bannerUrl:
+          type: string
+        address:
+          type: string
+        openTime:
+          type: string
+        closeTime:
+          type: string
+        adminUsername:
+          type: string
+      required: [storeName, whatsappNumber, bankName, accountNumber, logoUrl, bannerUrl, address, openTime, closeTime, adminUsername]
+
+    StoreSettingsInput:
+      type: object
+      properties:
+        storeName:
+          type: string
+        whatsappNumber:
+          type: string
+        bankName:
+          type: string
+        accountNumber:
+          type: string
+        logoUrl:
+          type: string
+        bannerUrl:
+          type: string
+        address:
+          type: string
+        openTime:
+          type: string
+        closeTime:
+          type: string
+        adminUsername:
+          type: string
+        adminPasswordHash:
+          type: string
+
+    Banner:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        subtitle:
+          type: string
+        image:
+          type: string
+        bgColor:
+          type: string
+        sortOrder:
+          type: integer
+        createdAt:
+          type: string
+      required: [id, title, subtitle, image, bgColor, sortOrder, createdAt]
+
+    BannerInput:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        subtitle:
+          type: string
+        image:
+          type: string
+        bgColor:
+          type: string
+        sortOrder:
+          type: integer
+      required: [id, title]
+
+    Coupon:
+      type: object
+      properties:
+        id:
+          type: string
+        code:
+          type: string
+        type:
+          type: string
+        value:
+          type: integer
+        minOrder:
+          type: integer
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+      required: [id, code, type, value, minOrder, isActive, createdAt]
+
+    CouponInput:
+      type: object
+      properties:
+        id:
+          type: string
+        code:
+          type: string
+        type:
+          type: string
+        value:
+          type: integer
+        minOrder:
+          type: integer
+        isActive:
+          type: boolean
+      required: [id, code, type, value]
+
+    CouponUpdate:
+      type: object
+      properties:
+        isActive:
+          type: boolean
+        code:
+          type: string
+        type:
+          type: string
+        value:
+          type: integer
+        minOrder:
+          type: integer

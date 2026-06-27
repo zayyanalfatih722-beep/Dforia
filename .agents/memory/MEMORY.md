@@ -1,0 +1,2 @@
+- [D'Foria Admin Data Architecture](dforia-admin-data.md) — Dashboard/Kasir/Orders/Keuangan/Laporan semuanya pakai API database, bukan localStorage.
+- [D'Foria Order Schema](dforia-order-schema.md) — OrderInputItems/OrderItems adalah `{ [key: string]: unknown }`, harus cast via `unknown` dulu ke `any[]`.
