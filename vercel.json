@@ -1,4 +1,5 @@
 {
-  "buildCommand": "cd artifacts/dforia && npm install --prefer-offline --no-audit && npm run build",
-  "outputDirectory": "artifacts/dforia/dist"
+  "buildCommand": "cd artifacts/dforia && pnpm install && pnpm run build",
+  "outputDirectory": "artifacts/dforia/dist",
+  "installCommand": "npm install -g pnpm"
 }
